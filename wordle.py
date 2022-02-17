@@ -1,21 +1,22 @@
 import sys
 
-from words import words
-from solutions import solutions
+from nytimes_words import words
+from nytimes_solutions import solutions
 
 import random
 from collections import Counter as C
 
 words.extend(solutions)
 
-today = 233
+today = 242
 answer = solutions[today]
 
 # starting = random.choice(words)
-starting = "irate"
+starting = "crane"
 tries = 1
 
 final = ["_", "_", "_", "_", "_"]
+bad = [[], [], [], [], []]
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 remaining = list(alphabet)
 confirmed = []
@@ -29,6 +30,7 @@ def update(guess):
                 letter_list[guess[i]] = 2
             else:
                 letter_list[guess[i]] = 1
+                bad[i].append(guess[i])
         else:
             letter_list[guess[i]] = 0
 
@@ -42,6 +44,8 @@ def update(guess):
 def fits(word):
     for i in range(5):
         if final[i] not in ("_", word[i]):
+            return False
+        if word[i] in bad[i]:
             return False
         if word[i] not in remaining:
             return False
@@ -58,6 +62,8 @@ for _ in range(5):
 
     ### function: Get Next Word
     words = [w for w in words if fits(w)]
+    print([w for w in words if w in solutions])
+    print(words)
     guess = random.choice(words)
     ### end function
 
@@ -67,6 +73,7 @@ for _ in range(5):
     tries += 1
 
     if guess == answer:
+        print(guess)
         print(f"Wordle {today}: {tries}/6\n")
         sys.exit(0)
 
